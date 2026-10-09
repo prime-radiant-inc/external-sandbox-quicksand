@@ -1,0 +1,20 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+.pytest_cache/
+.ruff_cache/
+.coverage
+
+# Local configuration, credentials and runtime state
+*.local.json
+.env
+.env.*
+.remote-sandbox-quicksand/
+work/
