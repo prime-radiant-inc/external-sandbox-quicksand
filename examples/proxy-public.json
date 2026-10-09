@@ -1,0 +1,5 @@
+{
+  "allow": [
+    {"origin": "https://example.com", "methods": ["GET", "HEAD"]}
+  ]
+}

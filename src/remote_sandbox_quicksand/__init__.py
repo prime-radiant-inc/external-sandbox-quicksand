@@ -1,2 +1,1 @@
-def main() -> None:
-    print("Hello from remote-sandbox-quicksand!")
+"""Remote Sandbox execution APIs backed by a Quicksand QEMU virtual machine."""

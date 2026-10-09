@@ -1,0 +1,22 @@
+{
+  "allow": [
+    {
+      "origin": "https://api.openai.com",
+      "methods": ["POST"],
+      "paths": ["/v1/responses"],
+      "credential": {
+        "header": "Authorization",
+        "placeholder": "Bearer sandbox-demo-placeholder",
+        "secretEnv": "OPENAI_API_KEY",
+        "prefix": "Bearer "
+      }
+    },
+    {
+      "origin": "https://example.com",
+      "methods": ["GET", "HEAD"]
+    }
+  ],
+  "guestEnv": {
+    "OPENAI_API_KEY": "sandbox-demo-placeholder"
+  }
+}

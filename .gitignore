@@ -18,3 +18,4 @@ wheels/
 .env.*
 .remote-sandbox-quicksand/
 work/
+.claude/

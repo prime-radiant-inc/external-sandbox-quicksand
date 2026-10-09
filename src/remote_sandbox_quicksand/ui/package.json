@@ -1,0 +1,13 @@
+{
+  "name": "remote-sandbox-ui",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "description": "Shared browser assets and client tests for Remote Sandbox servers",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.mjs"
+  }
+}
