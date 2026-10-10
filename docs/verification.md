@@ -11,8 +11,6 @@ The [remote-sandbox](https://github.com/prime-radiant-inc/remote-sandbox) runner
 | Prepared Alpine 3.23 (bash, git, python3, ripgrep) | core, browser, mounts, proxy, proxy-tls | **116 passed** | true |
 | Ubuntu 24.04 (`--image ubuntu`) | core, browser, mounts, proxy, proxy-tls | **116 passed** | true |
 
-The first Alpine run, before the agent restored default signal handling, failed one check (`test_signal_and_terminate`, SIGINT to a Codex process). The guest agent is started as a background job, which ignores SIGINT and SIGQUIT, and commands inherited that. The fix is in `a93aa17`.
-
 To reproduce, generate the fixture with `uv run --project ../remote-sandbox remote-sandbox-proxy-fixture work/tls`, then start a dedicated server from a shell that has sourced `work/tls/server-env.sh`:
 
 ```sh
@@ -50,7 +48,7 @@ The Codex CLI was installed separately at the pinned version 0.154.0. The test u
 ## Agent clients
 
 - **Claude Code shell prefix:** the shared streaming client passed the tests above against both a test server and a real VM.
-- **Pi:** the shared extension's integration tests (`remote-sandbox/pi`, Pi 0.85.1) passed 10 of 12 against the prepared Alpine image. Both failures come from the Pi guest helper's `find`, which calls `PurePosixPath.full_match`, new in Python 3.13. Pi's README requires Python 3.13 or newer in the guest, but Alpine 3.23 and Ubuntu 24.04 both ship Python 3.12. Pi's `bash`, `read`, `write`, `edit`, user-shell and fail-closed checks passed.
+- **Pi:** the shared extension's integration tests (`remote-sandbox/pi` at `71c61d4`, Pi 0.85.1) passed 12 of 12 against the prepared Alpine image, whose guest runs Python 3.12. The server had the example public-site proxy policy and a writable project mount.
 
 ## Measurements
 

@@ -70,7 +70,7 @@ Agent integrations are maintained in [remote-sandbox](https://github.com/prime-r
 
 - [Claude Code](https://github.com/prime-radiant-inc/remote-sandbox/tree/main/claude-code): set `REMOTE_SANDBOX_API_URL=http://127.0.0.1:8688` and start this server with `--preserve-paths --mount-rw project=$PWD`.
 - [Codex](https://github.com/prime-radiant-inc/remote-sandbox/tree/main/codex): use executor URL `ws://127.0.0.1:8688/codex`.
-- [Pi](https://github.com/prime-radiant-inc/remote-sandbox/tree/main/pi): use `--sandbox-url http://127.0.0.1:8688`. Pi's `find` tool needs Python 3.13 in the guest; both images ship Python 3.12, so it fails while Pi's other tools work.
+- [Pi](https://github.com/prime-radiant-inc/remote-sandbox/tree/main/pi): use `--sandbox-url http://127.0.0.1:8688`. The default Alpine image includes the Python and ripgrep its tools need.
 
 ## Scope
 
