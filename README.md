@@ -62,7 +62,7 @@ uv run remote-sandbox-quicksand --proxy-config examples/proxy-public.json
 
 QEMU's `guestfwd` TCP backend is one persistent byte stream, so a small static Go helper ([`guest-mux`](guest-mux/guest_mux.go), from the Quicksand proxy prototype) listens on guest `127.0.0.1:3128` and multiplexes each connection over that stream. The host [bridge](src/remote_sandbox_quicksand/proxy_bridge.py) opens one connection per channel to the embedded host proxy and nowhere else. Commands receive standard proxy variables, `NODE_USE_ENV_PROXY=1`, and a CA bundle containing the proxy's public certificate.
 
-The proxy, policy format, management page and API are the same as the container server's and follow the protocol's proxy profile: exact-origin allow rules with optional methods, paths and CIDRs; public addresses only by default; credential placeholders replaced on the host; secret redaction; and live policy edits at `http://127.0.0.1:8688/proxy` that close existing connections. [examples/proxy.json](examples/proxy.json) demonstrates credential substitution and needs `OPENAI_API_KEY` in the server's environment. Removing proxy variables cannot open another route: QEMU drops everything except the guestfwd stream. If the guestfwd stream fails, proxy access fails closed until restart; `/health` reports `proxyTransport`.
+The proxy, policy format, management page and API are the same as the container server's and follow the protocol's proxy profile: exact-origin allow rules with optional methods, paths and CIDRs; public addresses only by default; credential placeholders replaced on the host; secret redaction; and live policy edits at `http://127.0.0.1:8688/proxy` that close existing connections. [examples/proxy.json](examples/proxy.json) demonstrates credential substitution and needs `OPENAI_API_KEY` in the server's environment. Literal redaction cannot prevent an allowed upstream from transforming and echoing a credential, so use credential rules only with trusted services and narrow their methods and paths. Removing proxy variables cannot open another route: QEMU drops everything except the guestfwd stream. If the guestfwd stream fails, proxy access fails closed until restart; `/health` reports `proxyTransport`.
 
 ## Agents
 
@@ -75,10 +75,11 @@ Agent integrations are maintained in [remote-sandbox](https://github.com/prime-r
 ## Scope
 
 - Commands and Codex filesystem operations run in the VM as guest root. The VM is the isolation boundary; guest root cannot change QEMU's mount modes or network restrictions.
-- Mounts deliberately expose host directories. Read-write mounts change host files immediately; host changes are visible in the guest. Guest root can follow symlinks only within the guest view. Do not expose a writable hardlink alias of a file in a read-only mount; this backend does not reproduce v86's hardlink checks.
-- The guest agent and proxy helper are not trusted by the host. The host bounds frame sizes and validates messages; a compromised guest can disrupt its own commands or proxy access, but not reach other destinations or host credentials.
+- Mounts deliberately expose host directories. Read-write mounts change host files immediately; host changes are visible in the guest. Guest root can follow symlinks only within the guest view. A pre-existing host hardlink in a writable mount remains editable even if another name for the same file is in a read-only mount; avoid that alias if the file must stay unchanged. This backend does not reproduce v86's hardlink checks.
+- The guest agent and proxy helper are not trusted by the host. The host bounds frame sizes and validates messages; a compromised guest can disrupt its own commands or proxy access. The host does not provision real credentials to the VM, but an allowed upstream can transform and echo one in its response.
 - Quicksand's own guest agent remains in the VM and is used only by the host for setup.
-- The execution listener is for trusted local clients, with the same browser token, Origin and Host checks as the other servers.
+- Agent processes, model traffic and host-side tools remain on the host; routing shell commands into the VM does not constrain those tools.
+- The execution listener is for trusted local clients, with the same browser token, Origin and Host checks as the other servers. It is not authentication between mutually untrusted host users or a remote multi-user service.
 
 ## Test
 
