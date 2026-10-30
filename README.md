@@ -1,6 +1,6 @@
 # external-sandbox-quicksand
 
-A Python execution server for coding agents that runs commands inside a [Quicksand](https://microsoft.github.io/quicksand/) QEMU virtual machine. It implements the shared [External Sandbox protocol](https://github.com/prime-radiant-inc/external-sandbox/blob/main/SPEC.md), alongside [external-sandbox-v86](https://github.com/prime-radiant-inc/external-sandbox-v86) and [external-sandbox-container](https://github.com/prime-radiant-inc/external-sandbox-container): the same buffered and streaming shell APIs, Codex endpoint, browser terminal, host mounts, and allow-listed HTTP(S) proxy, with a full virtual machine as the sandbox.
+A Python execution server for coding agents that runs commands inside a [Quicksand](https://microsoft.github.io/quicksand/) QEMU virtual machine. It implements the shared [External Sandbox protocol](https://github.com/prime-radiant-inc/external-sandbox/blob/main/PROTOCOL.md), alongside [external-sandbox-v86](https://github.com/prime-radiant-inc/external-sandbox-v86) and [external-sandbox-container](https://github.com/prime-radiant-inc/external-sandbox-container): the same buffered and streaming shell APIs, Codex endpoint, browser terminal, host mounts, and allow-listed HTTP(S) proxy, with a full virtual machine as the sandbox.
 
 ## Start
 
