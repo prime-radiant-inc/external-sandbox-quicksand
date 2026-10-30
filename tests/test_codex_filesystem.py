@@ -5,7 +5,7 @@ from pathlib import Path
 import tempfile
 import unittest
 
-from remote_sandbox_quicksand.guest_fs import FILE_BYTES, FileSystemSession, guest_path_from_uri, guest_path_to_uri
+from external_sandbox_quicksand.guest_fs import FILE_BYTES, FileSystemSession, guest_path_from_uri, guest_path_to_uri
 
 
 class FileSystemTests(unittest.TestCase):

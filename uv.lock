@@ -1,5 +1,5 @@
 version = 1
-revision = 3
+revision = 5
 requires-python = ">=3.12"
 
 [[package]]
@@ -360,6 +360,54 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/a2/71/269f74ef9bc8ca453af2e1768d4f4c8e7ef5f894d058d27fd1b69c754d7f/dnslib-0.9.26.tar.gz", hash = "sha256:be56857534390b2fbd02935270019bacc5e6b411d156cb3921ac55a7fb51f1a8", size = 82901, upload-time = "2025-03-03T09:17:32.606Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/16/93/167364f10194e374119b211e475ed8763d7591ae4f7001b304282dde5825/dnslib-0.9.26-py3-none-any.whl", hash = "sha256:e68719e633d761747c7e91bd241019ef5a2b61a63f56025939e144c841a70e0d", size = 64161, upload-time = "2025-03-03T09:17:31.47Z" },
+]
+
+[[package]]
+name = "external-sandbox-quicksand"
+version = "0.1.0"
+source = { editable = "." }
+dependencies = [
+    { name = "aiohttp" },
+    { name = "cryptography" },
+    { name = "h11" },
+    { name = "quick-sandbox" },
+    { name = "quicksand-alpine" },
+    { name = "quicksand-core" },
+    { name = "quicksand-qemu" },
+]
+
+[package.optional-dependencies]
+ubuntu = [
+    { name = "quicksand-ubuntu" },
+]
+
+[package.dev-dependencies]
+dev = [
+    { name = "pytest" },
+    { name = "pytest-asyncio" },
+    { name = "ruff" },
+    { name = "websockets" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "aiohttp", specifier = ">=3.12,<4" },
+    { name = "cryptography", specifier = ">=45,<48" },
+    { name = "h11", specifier = ">=0.16,<1" },
+    { name = "quick-sandbox", specifier = "==0.12.0" },
+    { name = "quicksand-alpine", specifier = "==0.10.0" },
+    { name = "quicksand-core", specifier = "==0.13.0" },
+    { name = "quicksand-qemu", specifier = "==0.5.12" },
+    { name = "quicksand-ubuntu", marker = "extra == 'ubuntu'", specifier = "==0.10.0", index = "https://microsoft.github.io/quicksand/simple/" },
+]
+provides-extras = ["ubuntu"]
+
+[package.metadata.requires-dev]
+dev = [
+    { name = "pytest", specifier = ">=8" },
+    { name = "pytest-asyncio", specifier = ">=1" },
+    { name = "ruff", specifier = ">=0.12" },
+    { name = "websockets", specifier = ">=15" },
 ]
 
 [[package]]
@@ -1018,54 +1066,6 @@ wheels = [
     { url = "https://github.com/microsoft/quicksand/releases/download/quicksand-ubuntu/v0.10.0/quicksand_ubuntu-0.10.0-py3-none-manylinux_2_17_x86_64.whl" },
     { url = "https://github.com/microsoft/quicksand/releases/download/quicksand-ubuntu/v0.10.0/quicksand_ubuntu-0.10.0-py3-none-win_amd64.whl" },
     { url = "https://github.com/microsoft/quicksand/releases/download/quicksand-ubuntu/v0.10.0/quicksand_ubuntu-0.10.0-py3-none-win_arm64.whl" },
-]
-
-[[package]]
-name = "remote-sandbox-quicksand"
-version = "0.1.0"
-source = { editable = "." }
-dependencies = [
-    { name = "aiohttp" },
-    { name = "cryptography" },
-    { name = "h11" },
-    { name = "quick-sandbox" },
-    { name = "quicksand-alpine" },
-    { name = "quicksand-core" },
-    { name = "quicksand-qemu" },
-]
-
-[package.optional-dependencies]
-ubuntu = [
-    { name = "quicksand-ubuntu" },
-]
-
-[package.dev-dependencies]
-dev = [
-    { name = "pytest" },
-    { name = "pytest-asyncio" },
-    { name = "ruff" },
-    { name = "websockets" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "aiohttp", specifier = ">=3.12,<4" },
-    { name = "cryptography", specifier = ">=45,<48" },
-    { name = "h11", specifier = ">=0.16,<1" },
-    { name = "quick-sandbox", specifier = "==0.12.0" },
-    { name = "quicksand-alpine", specifier = "==0.10.0" },
-    { name = "quicksand-core", specifier = "==0.13.0" },
-    { name = "quicksand-qemu", specifier = "==0.5.12" },
-    { name = "quicksand-ubuntu", marker = "extra == 'ubuntu'", specifier = "==0.10.0", index = "https://microsoft.github.io/quicksand/simple/" },
-]
-provides-extras = ["ubuntu"]
-
-[package.metadata.requires-dev]
-dev = [
-    { name = "pytest", specifier = ">=8" },
-    { name = "pytest-asyncio", specifier = ">=1" },
-    { name = "ruff", specifier = ">=0.12" },
-    { name = "websockets", specifier = ">=15" },
 ]
 
 [[package]]

@@ -2,9 +2,9 @@ import {readFile} from 'node:fs/promises';
 import {resolve} from 'node:path';
 import {fileURLToPath} from 'node:url';
 
-const directory = process.env.REMOTE_SANDBOX_UI_ASSETS;
-const origin = process.env.REMOTE_SANDBOX_UI_URL;
-if (directory && origin) throw new Error('Set only one of REMOTE_SANDBOX_UI_ASSETS and REMOTE_SANDBOX_UI_URL.');
+const directory = process.env.EXTERNAL_SANDBOX_UI_ASSETS;
+const origin = process.env.EXTERNAL_SANDBOX_UI_URL;
+if (directory && origin) throw new Error('Set only one of EXTERNAL_SANDBOX_UI_ASSETS and EXTERNAL_SANDBOX_UI_URL.');
 
 const routes = {'terminal.html': '/', 'terminal.js': '/terminal.js', 'proxy.html': '/proxy'};
 const localAssets = directory ? resolve(directory) : fileURLToPath(new URL('../assets/', import.meta.url));
@@ -15,7 +15,7 @@ export async function loadAsset(name) {
   if (!origin) return readFile(resolve(localAssets, name), 'utf8');
   const url = new URL(origin);
   if (!['http:', 'https:'].includes(url.protocol) || url.username || url.password) {
-    throw new Error('REMOTE_SANDBOX_UI_URL must be an HTTP(S) URL without credentials.');
+    throw new Error('EXTERNAL_SANDBOX_UI_URL must be an HTTP(S) URL without credentials.');
   }
   const response = await fetch(new URL(routes[name], url), {
     method: 'GET', credentials: 'omit', redirect: 'error', signal: AbortSignal.timeout(10000),

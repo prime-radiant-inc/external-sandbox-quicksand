@@ -212,14 +212,14 @@ class GuestMux:
         self.child = None
         self.environment = {}
 
-    async def start(self, ca_pem, helper, directory="/run/remote-sandbox-proxy"):
+    async def start(self, ca_pem, helper, directory="/run/external-sandbox-proxy"):
         # Only public CA material reaches the guest. Preserve public system roots
         # for applications that also communicate with guest-local HTTPS services.
         if not isinstance(ca_pem, str) or len(ca_pem) > 65536 or "-----BEGIN CERTIFICATE-----" not in ca_pem:
             raise ValueError("Invalid proxy CA certificate")
         if "PRIVATE KEY" in ca_pem:
             raise ValueError("Refusing private key material in the guest")
-        if not isinstance(helper, str) or not helper.startswith("/opt/remote-sandbox-quicksand/"):
+        if not isinstance(helper, str) or not helper.startswith("/opt/external-sandbox-quicksand/"):
             raise ValueError("Invalid guest proxy helper path")
         roots = ""
         for candidate in ("/etc/ssl/certs/ca-certificates.crt", "/etc/ssl/cert.pem"):
@@ -298,7 +298,7 @@ async def wait_for_network(timeout):
 
 
 async def main():
-    if sys.platform != "linux" or os.environ.get("REMOTE_SANDBOX_QUICKSAND_GUEST") != "1":
+    if sys.platform != "linux" or os.environ.get("EXTERNAL_SANDBOX_QUICKSAND_GUEST") != "1":
         raise SystemExit("This agent must run inside the managed Quicksand VM")
     if len(sys.argv) != 3 or sys.argv[1] != "--port" or not sys.argv[2].startswith("/dev/"):
         raise SystemExit("usage: guest_agent.py --port /dev/virtio-ports/NAME")

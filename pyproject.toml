@@ -1,7 +1,7 @@
 [project]
-name = "remote-sandbox-quicksand"
+name = "external-sandbox-quicksand"
 version = "0.1.0"
-description = "Remote Sandbox server backed by Quicksand QEMU virtual machines"
+description = "External Sandbox server backed by Quicksand QEMU virtual machines"
 readme = "README.md"
 authors = [
     { name = "Simon Willison", email = "swillison@gmail.com" }
@@ -26,7 +26,7 @@ ubuntu = ["quicksand-ubuntu==0.10.0"]
 dev = ["pytest>=8", "pytest-asyncio>=1", "websockets>=15", "ruff>=0.12"]
 
 [project.scripts]
-remote-sandbox-quicksand = "remote_sandbox_quicksand.cli:main"
+external-sandbox-quicksand = "external_sandbox_quicksand.cli:main"
 
 [build-system]
 requires = ["uv_build>=0.12.9,<0.13.0"]
@@ -51,4 +51,4 @@ select = ["E4", "E7", "E9", "F"]
 
 [tool.uv.build-backend]
 source-include = ["docs/**", "examples/**", "guest-mux/**", "tests/**", "uv.lock", ".python-version", "PROVENANCE.md"]
-wheel-exclude = ["src/remote_sandbox_quicksand/ui/test/**"]
+wheel-exclude = ["src/external_sandbox_quicksand/ui/test/**"]

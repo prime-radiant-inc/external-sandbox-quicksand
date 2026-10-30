@@ -136,10 +136,10 @@ class Backend(Protocol):
     async def close_fs_session(self, session_id): ...
 
 
-GUEST_DIR = "/opt/remote-sandbox-quicksand"
+GUEST_DIR = "/opt/external-sandbox-quicksand"
 GUEST_FILES = ("guest_agent.py", "guest_fs.py")
-AGENT_PORT_NAME = "remote-sandbox.agent.0"
-AGENT_LOG = "/var/log/remote-sandbox-agent.log"
+AGENT_PORT_NAME = "external-sandbox.agent.0"
+AGENT_LOG = "/var/log/external-sandbox-agent.log"
 GUEST_ARCHITECTURES = {"aarch64": "arm64", "arm64": "arm64", "x86_64": "amd64", "amd64": "amd64"}
 
 
@@ -271,7 +271,7 @@ class QuicksandBackend:
             self.reader_task = asyncio.create_task(self._read(reader))
             helper = await self._install_guest_files()
             await self._bind_preserved_paths()
-            await self._guest(f"REMOTE_SANDBOX_QUICKSAND_GUEST=1 setsid python3 -I -u {GUEST_DIR}/guest_agent.py "
+            await self._guest(f"EXTERNAL_SANDBOX_QUICKSAND_GUEST=1 setsid python3 -I -u {GUEST_DIR}/guest_agent.py "
                               f"--port /dev/virtio-ports/{AGENT_PORT_NAME} </dev/null >>{AGENT_LOG} 2>&1 &")
             try:
                 ready = await asyncio.wait_for(asyncio.shield(self.ready), 60)

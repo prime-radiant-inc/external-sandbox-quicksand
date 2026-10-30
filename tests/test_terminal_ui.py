@@ -10,7 +10,7 @@ import pytest
 from aiohttp import WSServerHandshakeError, WSMsgType
 from aiohttp.test_utils import TestClient, TestServer
 
-from remote_sandbox_quicksand.api import create_app
+from external_sandbox_quicksand.api import create_app
 from test_api import EXIT, FakeBackend, receive
 
 
@@ -44,8 +44,8 @@ async def test_homepage_and_bundled_javascript(terminal_server):
     token, html, page = await terminal_token(client)
     assert len(token) >= 32
     assert "/terminal.js" in html
-    assert "<title>Remote sandbox terminal</title>" in html
-    assert '<div class="eyebrow">Remote sandbox Quicksand</div>' in html
+    assert "<title>External sandbox terminal</title>" in html
+    assert '<div class="eyebrow">External sandbox Quicksand</div>' in html
     assert "__TITLE__" not in html and "__BRAND__" not in html
     assert page.content_type == "text/html"
     assert page.headers["Cache-Control"] == "no-store"
@@ -57,7 +57,7 @@ async def test_homepage_and_bundled_javascript(terminal_server):
     assert script.content_type in {"application/javascript", "text/javascript"}
     assert script.headers["Cache-Control"] == "no-store"
     assert token not in await script.text()
-    assert await script.read() == files("remote_sandbox_quicksand").joinpath("ui", "assets", "terminal.js").read_bytes()
+    assert await script.read() == files("external_sandbox_quicksand").joinpath("ui", "assets", "terminal.js").read_bytes()
     assert "Access-Control-Allow-Origin" not in script.headers
     assert not backend.calls
 

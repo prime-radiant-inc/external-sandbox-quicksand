@@ -54,8 +54,8 @@ def install_terminal(app: web.Application, backend) -> None:
         network = "Managed proxy" if info.get("proxyEnabled") else "Network disabled"
         link = '<a id="proxy-link" href="/proxy" target="_blank" rel="noopener">Network policy ↗</a>' if info.get("proxyEnabled") else ""
         values = {"__NONCE__": nonce, "__TOKEN__": app[TERMINAL_TOKEN],
-                  "__TITLE__": html.escape("Remote sandbox terminal", quote=True),
-                  "__BRAND__": html.escape("Remote sandbox Quicksand", quote=True),
+                  "__TITLE__": html.escape("External sandbox terminal", quote=True),
+                  "__BRAND__": html.escape("External sandbox Quicksand", quote=True),
                   "__CWD__": html.escape(str(info.get("defaultCwd", "/workspace")), quote=True),
                   "__NETWORK__": network, "__PROXY_LINK__": link}
         # Replace only tokens in the original template, never tokens inside a

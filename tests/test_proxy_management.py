@@ -6,7 +6,7 @@ import pytest
 from aiohttp import web
 from aiohttp.test_utils import TestClient, TestServer
 
-from remote_sandbox_quicksand.proxy_management import install_proxy_management
+from external_sandbox_quicksand.proxy_management import install_proxy_management
 
 
 POLICY = {"allow": [{"origin": "https://api.example.test", "methods": ["GET"],
@@ -181,7 +181,7 @@ async def test_duplicate_token_or_origin_is_rejected(server):
 
 
 async def test_management_integrates_without_relaxing_other_browser_apis():
-    from remote_sandbox_quicksand.api import create_app
+    from external_sandbox_quicksand.api import create_app
 
     proxy = FakeProxy()
     # No execution operations should be reached by any of these browser calls.

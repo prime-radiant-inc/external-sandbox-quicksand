@@ -8,7 +8,7 @@ import aiohttp
 from aiohttp.test_utils import TestServer
 import pytest
 
-from remote_sandbox_quicksand.api import create_app
+from external_sandbox_quicksand.api import create_app
 from test_quicksand_integration import sandbox as sandbox  # shared module-scoped fixture
 
 
@@ -26,8 +26,8 @@ async def idle(backend):
 async def test_shared_uv_client_real_binary_io_and_exit(external_streaming_client, sandbox):
     backend, rw, _ = sandbox
     async with TestServer(create_app(backend)) as server:
-        env = {key: value for key, value in os.environ.items() if not key.startswith(("REMOTE_SANDBOX_", "V86_"))}
-        env["REMOTE_SANDBOX_API_URL"] = str(server.make_url("/"))
+        env = {key: value for key, value in os.environ.items() if not key.startswith(("EXTERNAL_SANDBOX_", "V86_"))}
+        env["EXTERNAL_SANDBOX_API_URL"] = str(server.make_url("/"))
         # /mounts maps this real host cwd into /mnt/project inside the VM.
         command = "printf 'prefix\\000\\377'; cat; printf 'stderr\\000\\377\\n' >&2; exit 23"
         client = await asyncio.create_subprocess_exec("uv", "run", "--quiet", "--script", str(external_streaming_client), command,

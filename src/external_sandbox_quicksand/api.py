@@ -1,4 +1,4 @@
-"""HTTP and byte-preserving WebSocket API shared with remote-sandbox-v86."""
+"""HTTP and byte-preserving WebSocket API shared with external-sandbox-v86."""
 
 from __future__ import annotations
 

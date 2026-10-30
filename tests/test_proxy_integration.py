@@ -18,7 +18,7 @@ from cryptography.x509.oid import NameOID
 import pytest
 import pytest_asyncio
 
-from remote_sandbox_quicksand.proxy import HostProxy, ProxyPolicy
+from external_sandbox_quicksand.proxy import HostProxy, ProxyPolicy
 from test_quicksand_integration import test_backend
 
 pytestmark = [pytest.mark.integration, pytest.mark.asyncio(loop_scope="module"),

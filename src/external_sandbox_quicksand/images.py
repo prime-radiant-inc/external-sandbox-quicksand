@@ -27,10 +27,10 @@ REQUIRED_PACKAGES = ("bash", "python3")
 DEFAULT_PACKAGES = ("bash", "python3", "git", "ripgrep")
 ALPINE_REPOSITORY = "https://dl-cdn.alpinelinux.org"
 ALPINE_POLICY = {"allow": [{"origin": ALPINE_REPOSITORY, "methods": ["GET", "HEAD"]}]}
-METADATA = "remote-sandbox-image.json"
+METADATA = "external-sandbox-image.json"
 SCHEMA = 1
 PACKAGE_NAME = re.compile(r"[a-z0-9][a-z0-9+._-]{0,63}")
-GUEST_HELPER = "/tmp/remote-sandbox-guest-mux"
+GUEST_HELPER = "/tmp/external-sandbox-guest-mux"
 
 
 @dataclass(frozen=True)
@@ -43,7 +43,7 @@ def cache_root(override=None) -> Path:
     if override:
         return Path(override).expanduser().absolute()
     base = os.environ.get("XDG_CACHE_HOME") or str(Path.home() / ".cache")
-    return Path(base).expanduser().absolute() / "remote-sandbox-quicksand"
+    return Path(base).expanduser().absolute() / "external-sandbox-quicksand"
 
 
 def parse_packages(text) -> tuple[str, ...]:
@@ -84,7 +84,7 @@ def alpine_key(identity) -> str:
 
 
 def _log(message):
-    print(f"remote-sandbox-quicksand: {message}", file=sys.stderr, flush=True)
+    print(f"external-sandbox-quicksand: {message}", file=sys.stderr, flush=True)
 
 
 async def resolve_image(name="alpine", packages=None, cache_dir=None, accel="auto") -> GuestImage:
@@ -100,7 +100,7 @@ async def resolve_image(name="alpine", packages=None, cache_dir=None, accel="aut
             quicksand_ubuntu.image.resolve(host_image_arch())
         except (PackageNotFoundError, ImportError, FileNotFoundError):
             raise ValueError("The Ubuntu image is optional; install it with "
-                             "`uv sync --extra ubuntu` or run `uv run --extra ubuntu remote-sandbox-quicksand`") from None
+                             "`uv sync --extra ubuntu` or run `uv run --extra ubuntu external-sandbox-quicksand`") from None
         return GuestImage("ubuntu", "ubuntu")
     # Another Quicksand image name or save directory. It must provide bash and python3.
     path = Path(name).expanduser()
@@ -168,15 +168,15 @@ async def prepare_alpine(identity, target: Path, accel):
         await run(f"setsid {GUEST_HELPER} {GUEST_LISTEN} {GUEST_ADDRESS}:{GUEST_PORT} "
                   f"</dev/null >{GUEST_HELPER}.log 2>&1 & echo $! > {GUEST_HELPER}.pid")
         await bridge.wait_ready(30)
-        await run("cat /etc/ssl/certs/ca-certificates.crt - > /tmp/remote-sandbox-ca.pem", stdin=proxy.ca_pem)
+        await run("cat /etc/ssl/certs/ca-certificates.crt - > /tmp/external-sandbox-ca.pem", stdin=proxy.ca_pem)
         proxy_env = (f"HTTPS_PROXY=http://{GUEST_LISTEN} https_proxy=http://{GUEST_LISTEN} "
-                     "SSL_CERT_FILE=/tmp/remote-sandbox-ca.pem")
+                     "SSL_CERT_FILE=/tmp/external-sandbox-ca.pem")
         await run(f"env {proxy_env} apk add --no-cache -- {' '.join(map(shlex.quote, packages))}", timeout=900)
         installed = (await run("apk info -v | sort")).split()
         checks = (await run("bash --version | head -1; python3 --version")).strip()
         # Leave nothing from this session in the saved disk: no helper, CA or package cache.
         await run(f"kill $(cat {GUEST_HELPER}.pid) 2>/dev/null; rm -f {GUEST_HELPER} {GUEST_HELPER}.log {GUEST_HELPER}.pid "
-                  "/tmp/remote-sandbox-ca.pem; rm -rf /var/cache/apk/*")
+                  "/tmp/external-sandbox-ca.pem; rm -rf /var/cache/apk/*")
         await sandbox.save("image", workspace=staging)
         metadata = {**identity, "installed": installed, "checks": checks.splitlines(),
                     "createdAt": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())}

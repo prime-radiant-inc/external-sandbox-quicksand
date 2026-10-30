@@ -8,11 +8,11 @@ import sys
 import pytest
 from aiohttp.test_utils import TestServer
 
-from remote_sandbox_quicksand.api import create_app
+from external_sandbox_quicksand.api import create_app
 from test_api import EXIT, FakeBackend
 
 
-@pytest.mark.parametrize("prefix", ["REMOTE_SANDBOX_", "V86_"])
+@pytest.mark.parametrize("prefix", ["EXTERNAL_SANDBOX_", "V86_"])
 @pytest.mark.parametrize("forward_stdin", [True, False])
 async def test_client_binary_streams_and_exit_status(external_streaming_client, forward_stdin, prefix):
     backend = FakeBackend()
@@ -25,7 +25,7 @@ async def test_client_binary_streams_and_exit_status(external_streaming_client, 
     if not forward_stdin:
         backend.process.events.put_nowait(EXIT.copy())
     async with TestServer(create_app(backend)) as server:
-        env = {key: value for key, value in os.environ.items() if not key.startswith(("REMOTE_SANDBOX_", "V86_"))}
+        env = {key: value for key, value in os.environ.items() if not key.startswith(("EXTERNAL_SANDBOX_", "V86_"))}
         env.update({prefix + "API_URL": str(server.make_url("/")), prefix + "CWD": "/workspace"})
         # Invoke the interpreter already managed by uv.
         command = "cat; printf 'this exact command is never evaluated on the host'"
@@ -58,8 +58,8 @@ async def test_legacy_client_maps_host_cwd_through_mounts(external_streaming_cli
     child_dir.mkdir()
     backend.process.events.put_nowait({**EXIT, "exitCode": 0})
     async with TestServer(create_app(backend)) as server:
-        env = {key: value for key, value in os.environ.items() if not key.startswith(("REMOTE_SANDBOX_", "V86_"))}
-        env["REMOTE_SANDBOX_API_URL"] = str(server.make_url("/"))
+        env = {key: value for key, value in os.environ.items() if not key.startswith(("EXTERNAL_SANDBOX_", "V86_"))}
+        env["EXTERNAL_SANDBOX_API_URL"] = str(server.make_url("/"))
         client = await asyncio.create_subprocess_exec(sys.executable, str(external_streaming_client), "--no-stdin", "pwd",
             env=env, cwd=child_dir, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE)
         async with asyncio.timeout(10):

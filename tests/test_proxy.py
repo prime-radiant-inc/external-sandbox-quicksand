@@ -8,9 +8,9 @@ import aiohttp
 import pytest
 from aiohttp import web
 
-from remote_sandbox_quicksand.proxy import HostProxy, LiteralRedactor
-from remote_sandbox_quicksand.proxy_certificates import CertificateAuthority
-from remote_sandbox_quicksand.proxy_policy import PolicyConfigError, ProxyPolicy
+from external_sandbox_quicksand.proxy import HostProxy, LiteralRedactor
+from external_sandbox_quicksand.proxy_certificates import CertificateAuthority
+from external_sandbox_quicksand.proxy_policy import PolicyConfigError, ProxyPolicy
 
 
 SECRET = "synthetic-host-secret-that-never-enters-the-guest"
@@ -274,7 +274,7 @@ async def test_framing_conflicts_duplicate_credentials_and_transport_header_cred
 
 
 async def test_response_limit_and_request_idle_timeout(monkeypatch):
-    import remote_sandbox_quicksand.proxy as engine
+    import external_sandbox_quicksand.proxy as engine
 
     async def handler(request):
         return web.Response(body=b"x" * 1025)
@@ -296,7 +296,7 @@ async def test_response_limit_and_request_idle_timeout(monkeypatch):
 
 
 async def test_headers_and_aggregate_upload_memory_are_bounded(monkeypatch):
-    import remote_sandbox_quicksand.proxy as engine
+    import external_sandbox_quicksand.proxy as engine
 
     received = []
 

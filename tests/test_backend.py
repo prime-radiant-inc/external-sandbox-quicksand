@@ -6,7 +6,7 @@ from types import SimpleNamespace
 
 import pytest
 
-from remote_sandbox_quicksand.backend import AGENT_PORT_NAME, GUEST_DIR, QuicksandBackend, Process, parse_mounts
+from external_sandbox_quicksand.backend import AGENT_PORT_NAME, GUEST_DIR, QuicksandBackend, Process, parse_mounts
 
 
 def test_mount_modes_and_aliases(tmp_path):
@@ -156,7 +156,7 @@ async def test_boot_installs_agent_files_binds_aliases_and_connects(tmp_path):
         assert (f'mkdir -p {alias} && mount --bind /mnt/project {alias} && mount -o remount,bind,ro {alias}'
                 in commands)
         launch = commands[-1]
-        assert launch.startswith('REMOTE_SANDBOX_QUICKSAND_GUEST=1 setsid python3 -I -u')
+        assert launch.startswith('EXTERNAL_SANDBOX_QUICKSAND_GUEST=1 setsid python3 -I -u')
         assert f'--port /dev/virtio-ports/{AGENT_PORT_NAME}' in launch and launch.endswith('&')
         assert backend.info()['accelerator'] == 'hvf' and backend.architecture == 'aarch64'
         assert await backend._rpc('fs', {}) == {'echo': 'fs'}

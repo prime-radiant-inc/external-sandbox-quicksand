@@ -30,7 +30,7 @@ def parser():
     result.add_argument("--packages", metavar="LIST",
                         help="Comma-separated Alpine packages for the prepared image, in addition to bash and "
                              "python3 (default: git,ripgrep); changing the list prepares a new cached image")
-    result.add_argument("--cache-dir", metavar="DIR", help="Prepared image cache (default: ~/.cache/remote-sandbox-quicksand)")
+    result.add_argument("--cache-dir", metavar="DIR", help="Prepared image cache (default: ~/.cache/external-sandbox-quicksand)")
     result.add_argument("--prepare-image", action="store_true", help="Prepare the selected image, then exit")
     result.add_argument("--port", type=int, default=8688, help="Loopback TCP port (default: 8688); 0 selects an available port")
     result.add_argument("--cpus", type=int, default=2)
@@ -120,7 +120,7 @@ def main():
     try:
         asyncio.run(prepare(args) if args.prepare_image else serve(args))
     except (OSError, ValueError, RuntimeError, TimeoutError) as exc:
-        print(f"remote-sandbox-quicksand: {exc}", file=sys.stderr)
+        print(f"external-sandbox-quicksand: {exc}", file=sys.stderr)
         raise SystemExit(1) from None
     except KeyboardInterrupt:
         pass

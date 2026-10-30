@@ -9,7 +9,7 @@ from pathlib import Path
 
 import pytest
 
-from remote_sandbox_quicksand.proxy_bridge import (DATA, END, HEADER, MAGIC, MAX_CHANNELS, OPEN, RESET, MuxBridge,
+from external_sandbox_quicksand.proxy_bridge import (DATA, END, HEADER, MAGIC, MAX_CHANNELS, OPEN, RESET, MuxBridge,
                                                    guestfwd_netdev_args)
 
 ROOT = Path(__file__).resolve().parents[1]

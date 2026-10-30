@@ -6,7 +6,7 @@ import pytest
 from aiohttp import WSMsgType
 from aiohttp.test_utils import TestClient, TestServer
 
-from remote_sandbox_quicksand.api import create_app
+from external_sandbox_quicksand.api import create_app
 
 
 EXIT = {"type": "exit", "exitCode": 17, "signal": None, "timedOut": False,
@@ -330,7 +330,7 @@ async def test_shutdown_cancels_websocket_process(server):
 
 
 async def test_idle_socket_start_deadline(server, monkeypatch):
-    monkeypatch.setattr("remote_sandbox_quicksand.api.START_DEADLINE_SECONDS", 0.01)
+    monkeypatch.setattr("external_sandbox_quicksand.api.START_DEADLINE_SECONDS", 0.01)
     client, backend = server
     ws = await client.ws_connect("/exec/ws")
     assert "within 10 seconds" in (await receive(ws, "error"))["error"]
@@ -340,7 +340,7 @@ async def test_idle_socket_start_deadline(server, monkeypatch):
 
 
 async def test_slow_reader_cancels_with_explicit_error(server, monkeypatch):
-    monkeypatch.setattr("remote_sandbox_quicksand.api.SEND_DEADLINE_SECONDS", 0.05)
+    monkeypatch.setattr("external_sandbox_quicksand.api.SEND_DEADLINE_SECONDS", 0.05)
     client, backend = server
     ws = await started(client)
     # Stop network reads altogether so the server cannot drain its bounded writer.

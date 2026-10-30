@@ -8,10 +8,10 @@ import pytest
 
 @pytest.fixture(scope="module")
 def external_streaming_client():
-    setting = os.environ.get("REMOTE_SANDBOX_CLIENT")
+    setting = os.environ.get("EXTERNAL_SANDBOX_CLIENT")
     if not setting:
-        pytest.skip("Set REMOTE_SANDBOX_CLIENT to the shared remote_sandbox_exec.py")
+        pytest.skip("Set EXTERNAL_SANDBOX_CLIENT to the shared external_sandbox_exec.py")
     path = Path(setting).expanduser().resolve()
     if not path.is_file():
-        pytest.fail(f"REMOTE_SANDBOX_CLIENT does not name a file: {path}")
+        pytest.fail(f"EXTERNAL_SANDBOX_CLIENT does not name a file: {path}")
     return path

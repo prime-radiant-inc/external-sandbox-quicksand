@@ -1,14 +1,14 @@
 {
   "schemaVersion": 1,
-  "name": "remote-sandbox-ui",
-  "version": "0.2.0",
-  "sourceCommit": "fdbe4530c6ec72636f949bc4e1b2e0e2e3cc3392",
+  "name": "external-sandbox-ui",
+  "version": "0.3.0",
+  "sourceCommit": "6d0595a2b499cc5c59d615b7ace558838762b94c",
   "files": {
-    "assets/proxy.html": "73158d008830e9269ed98e8fb2ff2231b05133f56cb2959f9193a7ef8bcc41e4",
+    "assets/proxy.html": "e6e02f0e3a10406413bbb062cce022c009b7d6b4f4a259adc878335aea60b648",
     "assets/terminal.html": "8ba70f9e935daa2a63400b060a16c2d0d8b2b21a2a9af123138efa13020ecb94",
     "assets/terminal.js": "12b6cf1897ac4bb37e7b05a309524d819e547bea00008b59d9c64ffedc103fb0",
-    "package.json": "ba5f8c9a0c4798ac1b77b0a65d7a8de260cbd8332fcf7106aa6028c8666c732c",
-    "test/load-assets.mjs": "f266412491a8deeef568e9c6c0d9b2112a5473d1c4006a460d94efb5d753ff7f",
+    "package.json": "c582144b7ef12b6017bd8cbd5871be882ab1b5b3cd026913a55e0b690a4762bb",
+    "test/load-assets.mjs": "936a6b4ece4350b79cb658f6cf79735c99c40c9963d6b8f5a249ab34a8df03cb",
     "test/proxy-client.test.mjs": "98137b5119cd1c147a15778648b14d0e0b4fe2e8c60a87656c91014e48c8a3af",
     "test/templates.test.mjs": "aebfe25b44633f8bcd4e0f2373c0400d3e6db8617b742b5326d79f09aa8b37af",
     "test/terminal-client.test.mjs": "27ccf5f952351cbaf6e331dc5c1cdb93cd9b342e665629b7c57635c19b5cf764"

@@ -41,3 +41,7 @@ The bundled binaries are the prototype's prebuilt files. Rebuilding the unchange
 - the private `_cleanup()` used after a partial start
 
 Prepared Alpine images are built locally from Quicksand's Alpine 3.23 image and packages from `https://dl-cdn.alpinelinux.org`. No VM image is committed to this repository.
+
+## Rename to External Sandbox — 30 October 2026
+
+The project, its GitHub repository, distribution, command and Python module are now `external-sandbox-quicksand` / `external_sandbox_quicksand`, matching the rename of the shared protocol project from Remote Sandbox to External Sandbox. Environment variables use the `EXTERNAL_SANDBOX_` prefix, the prepared-image cache moved to `~/.cache/external-sandbox-quicksand`, guest paths and the agent's virtio-serial port name follow the new name, and the shared UI bundle is `external-sandbox-ui` 0.3.0. Wire protocol, default ports and behaviour are unchanged. The names, paths and commits recorded above describe earlier states and are preserved as written.

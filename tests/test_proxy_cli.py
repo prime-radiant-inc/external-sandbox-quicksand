@@ -3,8 +3,8 @@ import asyncio
 
 import pytest
 
-from remote_sandbox_quicksand import cli
-from remote_sandbox_quicksand.images import GuestImage
+from external_sandbox_quicksand import cli
+from external_sandbox_quicksand.images import GuestImage
 
 
 @pytest.fixture(autouse=True)

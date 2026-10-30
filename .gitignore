@@ -16,6 +16,6 @@ wheels/
 *.local.json
 .env
 .env.*
-.remote-sandbox-quicksand/
+.external-sandbox-quicksand/
 work/
 .claude/

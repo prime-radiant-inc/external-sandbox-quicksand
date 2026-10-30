@@ -3,7 +3,7 @@ from importlib.metadata import PackageNotFoundError
 
 import pytest
 
-from remote_sandbox_quicksand import images
+from external_sandbox_quicksand import images
 
 
 def test_default_and_explicit_packages_always_include_requirements():
@@ -64,4 +64,4 @@ async def test_other_images_pass_through(tmp_path):
 def test_cache_root_honours_override_and_xdg(monkeypatch, tmp_path):
     assert images.cache_root(tmp_path) == tmp_path
     monkeypatch.setenv("XDG_CACHE_HOME", str(tmp_path / "xdg"))
-    assert images.cache_root() == tmp_path / "xdg" / "remote-sandbox-quicksand"
+    assert images.cache_root() == tmp_path / "xdg" / "external-sandbox-quicksand"

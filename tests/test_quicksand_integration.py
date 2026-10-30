@@ -7,8 +7,8 @@ import os
 import pytest
 import pytest_asyncio
 
-from remote_sandbox_quicksand.backend import QuicksandBackend, parse_mounts
-from remote_sandbox_quicksand.images import resolve_image
+from external_sandbox_quicksand.backend import QuicksandBackend, parse_mounts
+from external_sandbox_quicksand.images import resolve_image
 
 pytestmark = [pytest.mark.integration, pytest.mark.asyncio(loop_scope='module'),
               pytest.mark.skipif(os.environ.get('RUN_QUICKSAND_TESTS') != '1', reason='Set RUN_QUICKSAND_TESTS=1')]
