@@ -51,8 +51,13 @@ def check_browser_access(request: web.Request) -> None:
         from .terminal import check_terminal_access
 
         check_terminal_access(request, websocket=True)
-    elif "Origin" in request.headers and request.path not in {"/proxy", "/proxy/api"}:
-        raise RequestError(403, "Browser Origin requests are not allowed.")
+    elif request.path not in {"/proxy", "/proxy/api"}:
+        if "Origin" in request.headers:
+            raise RequestError(403, "Browser Origin requests are not allowed.")
+        # Fetch Metadata still identifies a cross-site browser request when Origin is missing.
+        sites = request.headers.getall("Sec-Fetch-Site", [])
+        if len(sites) > 1 or (sites and sites[0] not in {"none", "same-origin"}):
+            raise RequestError(403, "Cross-site browser requests are not allowed.")
     hosts = request.headers.getall("Host", [])
     match = re.fullmatch(r"(?:localhost|127\.0\.0\.1|\[::1\])(?::([0-9]{1,5}))?", hosts[0], re.I) if len(hosts) == 1 else None
     if not match or (match[1] is not None and not 1 <= int(match[1]) <= 65535):

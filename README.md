@@ -79,7 +79,7 @@ Agent integrations are maintained in [external-sandbox](https://github.com/prime
 - The guest agent and proxy helper are not trusted by the host. The host bounds frame sizes and validates messages; a compromised guest can disrupt its own commands or proxy access. The host does not provision real credentials to the VM, but an allowed upstream can transform and echo one in its response.
 - Quicksand's own guest agent remains in the VM and is used only by the host for setup.
 - Agent processes, model traffic and host-side tools remain on the host; routing shell commands into the VM does not constrain those tools.
-- The execution listener is for trusted local clients, with the same browser token, Origin and Host checks as the other servers. It is not authentication between mutually untrusted host users or a remote multi-user service.
+- The execution listener is for trusted local clients, with the same browser token, Origin, Fetch Metadata and Host checks as the other servers. It is not authentication between mutually untrusted host users or a remote multi-user service.
 
 ## Test
 

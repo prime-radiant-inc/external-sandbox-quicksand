@@ -394,3 +394,25 @@ async def test_http_stdin_failure_returns_error_and_cancels(server):
     assert response.status == 500
     assert await response.json() == {"error": "Guest input transport failed"}
     assert backend.process.terminated.is_set()
+
+
+
+@pytest.mark.parametrize("value", ["cross-site", "same-site", "cross-site, none"])
+@pytest.mark.parametrize("method,path", [("GET", "/health"), ("GET", "/mounts"), ("POST", "/exec"), ("GET", "/codex")])
+async def test_legacy_routes_reject_cross_site_fetch_metadata_without_origin(server, method, path, value):
+    client, backend = server
+    kwargs = {"json": {"command": "true"}} if method == "POST" else {}
+    response = await client.request(method, path, headers={"Sec-Fetch-Site": value}, **kwargs)
+    assert response.status == 403
+    assert not backend.calls
+
+
+@pytest.mark.parametrize("value", ["none", "same-origin"])
+async def test_legacy_routes_keep_same_origin_fetch_metadata(server, value):
+    client, _ = server
+    assert (await client.get("/health", headers={"Sec-Fetch-Site": value})).status == 200
+
+
+async def test_command_line_clients_send_no_fetch_metadata_and_stay_allowed(server):
+    client, _ = server
+    assert (await client.get("/health")).status == 200
