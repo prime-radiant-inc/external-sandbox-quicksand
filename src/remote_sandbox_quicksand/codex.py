@@ -1,4 +1,4 @@
-"""Codex rust-v0.154.0 exec-server wire compatibility over /codex.
+"""Codex rust-v0.164.0 exec-server wire compatibility over /codex.
 
 This endpoint intentionally has no thread/shellCommand method or host fallback.
 """

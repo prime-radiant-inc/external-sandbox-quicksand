@@ -79,8 +79,8 @@ def test_real_codex_cli_remote_execution_and_native_patch(tmp_path: Path):
             check=True,
         ).stdout.strip()
     except FileNotFoundError:
-        pytest.skip("Install Codex CLI 0.154.0 or set CODEX_CLI_BIN")
-    assert version == "codex-cli 0.154.0", "The experimental exec-server protocol is pinned"
+        pytest.skip("Install Codex CLI 0.164.0 or set CODEX_CLI_BIN")
+    assert version == "codex-cli 0.164.0", "The experimental exec-server protocol is pinned"
 
     rw = Path(tempfile.mkdtemp(prefix="codex-fixture-", dir=rw_root))
     ro = Path(tempfile.mkdtemp(prefix="codex-fixture-", dir=ro_root))
@@ -169,7 +169,7 @@ def test_real_codex_cli_remote_execution_and_native_patch(tmp_path: Path):
     provider_thread.start()
     try:
         (state / "config.toml").write_text(
-            f'''model = "gpt-5.4"
+            f'''model = "gpt-5.5"
 model_provider = "sandbox_fixture"
 approval_policy = "never"
 sandbox_mode = "danger-full-access"
@@ -299,8 +299,8 @@ async def test_real_codex_shell_shortcut_fails_without_local_environment(tmp_pat
             capture_output=True, text=True, timeout=10, check=True,
         ).stdout.strip()
     except FileNotFoundError:
-        pytest.skip("Install Codex CLI 0.154.0 or set CODEX_CLI_BIN")
-    assert version == "codex-cli 0.154.0", "The experimental App Server behavior is pinned"
+        pytest.skip("Install Codex CLI 0.164.0 or set CODEX_CLI_BIN")
+    assert version == "codex-cli 0.164.0", "The experimental App Server behavior is pinned"
 
     provider_requests = []
 
@@ -318,7 +318,7 @@ async def test_real_codex_shell_shortcut_fails_without_local_environment(tmp_pat
     provider_thread = threading.Thread(target=provider.serve_forever, daemon=True)
     provider_thread.start()
     (state / "config.toml").write_text(
-        f'''model = "gpt-5.4"
+        f'''model = "gpt-5.5"
 model_provider = "no_inference"
 approval_policy = "never"
 sandbox_mode = "danger-full-access"

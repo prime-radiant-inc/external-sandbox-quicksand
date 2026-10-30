@@ -41,9 +41,9 @@ Add `--image ubuntu` and run the server with `uv run --extra ubuntu` for the Ubu
 | Real-VM integration, Alpine | 18 passed, 4 tool-image tests skipped |
 | Real-VM integration, Ubuntu | 18 passed, 4 tool-image tests skipped |
 | Proxy integration with the Alpine tool image (Node 24, npm, uv, jq) | 9 passed |
-| Real Codex CLI 0.154.0 against a running server (exec, native `apply_patch` on rw and ro mounts) | 2 passed |
+| Real Codex CLI 0.164.0 against a running server (exec, native `apply_patch` on rw and ro mounts) | 2 passed |
 
-The Codex CLI was installed separately at the pinned version 0.154.0. The test uses deterministic loopback model responses.
+The Codex CLI was installed separately at the pinned version 0.164.0. The test uses deterministic loopback model responses.
 
 ## Agent clients
 
