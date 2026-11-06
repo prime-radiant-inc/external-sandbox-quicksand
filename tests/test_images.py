@@ -50,7 +50,7 @@ async def test_ubuntu_is_optional_and_takes_no_packages(monkeypatch):
         raise PackageNotFoundError(name)
 
     monkeypatch.setattr(images, "version", missing)
-    with pytest.raises(ValueError, match="--extra ubuntu"):
+    with pytest.raises(ValueError, match="--group ubuntu"):
         await images.resolve_image("ubuntu")
 
 

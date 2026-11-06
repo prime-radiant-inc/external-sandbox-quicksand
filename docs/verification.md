@@ -28,7 +28,7 @@ uv run external-sandbox-conformance --url http://127.0.0.1:18788 \
   --proxy-tls-key ../external-sandbox-quicksand/work/tls/key.pem -q
 ```
 
-Add `--image ubuntu` and run the server with `uv run --extra ubuntu` for the Ubuntu result.
+Add `--image ubuntu` and run the server with `uv run --group ubuntu` for the Ubuntu result.
 
 ## Project tests
 

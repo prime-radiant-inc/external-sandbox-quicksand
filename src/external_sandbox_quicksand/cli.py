@@ -25,8 +25,8 @@ def parser():
     result = argparse.ArgumentParser(description=__doc__)
     result.add_argument("paths", nargs="*", help="Writable host directories (same as --mount-rw)")
     result.add_argument("--image", default="alpine",
-                        help="alpine (default, prepared once with bash and python3), ubuntu (requires the "
-                             "ubuntu extra), or a Quicksand save directory providing /bin/bash and python3")
+                        help="alpine (default, prepared once with bash and python3), ubuntu (source checkout with "
+                             "the ubuntu dependency group), or a Quicksand save directory providing /bin/bash and python3")
     result.add_argument("--packages", metavar="LIST",
                         help="Comma-separated Alpine packages for the prepared image, in addition to bash and "
                              "python3 (default: git,ripgrep); changing the list prepares a new cached image")

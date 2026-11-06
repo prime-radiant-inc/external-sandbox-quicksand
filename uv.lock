@@ -376,17 +376,15 @@ dependencies = [
     { name = "quicksand-qemu" },
 ]
 
-[package.optional-dependencies]
-ubuntu = [
-    { name = "quicksand-ubuntu" },
-]
-
 [package.dev-dependencies]
 dev = [
     { name = "pytest" },
     { name = "pytest-asyncio" },
     { name = "ruff" },
     { name = "websockets" },
+]
+ubuntu = [
+    { name = "quicksand-ubuntu" },
 ]
 
 [package.metadata]
@@ -398,9 +396,7 @@ requires-dist = [
     { name = "quicksand-alpine", specifier = "==0.10.0" },
     { name = "quicksand-core", specifier = "==0.13.0" },
     { name = "quicksand-qemu", specifier = "==0.5.12" },
-    { name = "quicksand-ubuntu", marker = "extra == 'ubuntu'", specifier = "==0.10.0", index = "https://microsoft.github.io/quicksand/simple/" },
 ]
-provides-extras = ["ubuntu"]
 
 [package.metadata.requires-dev]
 dev = [
@@ -409,6 +405,7 @@ dev = [
     { name = "ruff", specifier = ">=0.12" },
     { name = "websockets", specifier = ">=15" },
 ]
+ubuntu = [{ name = "quicksand-ubuntu", specifier = "==0.10.0", index = "https://microsoft.github.io/quicksand/simple/" }]
 
 [[package]]
 name = "frozenlist"

@@ -99,8 +99,8 @@ async def resolve_image(name="alpine", packages=None, cache_dir=None, accel="aut
 
             quicksand_ubuntu.image.resolve(host_image_arch())
         except (PackageNotFoundError, ImportError, FileNotFoundError):
-            raise ValueError("The Ubuntu image is optional; install it with "
-                             "`uv sync --extra ubuntu` or run `uv run --extra ubuntu external-sandbox-quicksand`") from None
+            raise ValueError("The Ubuntu image is not part of the published package; from a source checkout, "
+                             "run `uv run --group ubuntu external-sandbox-quicksand --image ubuntu`") from None
         return GuestImage("ubuntu", "ubuntu")
     # Another Quicksand image name or save directory. It must provide bash and python3.
     path = Path(name).expanduser()

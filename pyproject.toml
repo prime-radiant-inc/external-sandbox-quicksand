@@ -2,13 +2,25 @@
 name = "external-sandbox-quicksand"
 version = "0.1.0"
 description = "External Sandbox server backed by Quicksand QEMU virtual machines"
-license = "Apache-2.0"
-license-files = ["LICENSE"]
+license = "Apache-2.0 AND BSD-3-Clause"
+license-files = ["LICENSE", "src/external_sandbox_quicksand/guest_bin/LICENSE-Go"]
 readme = "README.md"
 authors = [
     { name = "Simon Willison", email = "swillison@gmail.com" }
 ]
 requires-python = ">=3.12"
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "Operating System :: MacOS",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Programming Language :: Python :: 3.15",
+    "Topic :: Software Development",
+]
 dependencies = [
     "aiohttp>=3.12,<4",
     "cryptography>=45,<48",
@@ -21,11 +33,17 @@ dependencies = [
     "quicksand-alpine==0.10.0",
 ]
 
-[project.optional-dependencies]
-ubuntu = ["quicksand-ubuntu==0.10.0"]
+[project.urls]
+Homepage = "https://github.com/prime-radiant-inc/external-sandbox-quicksand"
+Repository = "https://github.com/prime-radiant-inc/external-sandbox-quicksand"
+Issues = "https://github.com/prime-radiant-inc/external-sandbox-quicksand/issues"
+Changelog = "https://github.com/prime-radiant-inc/external-sandbox-quicksand/releases"
 
 [dependency-groups]
 dev = ["pytest>=8", "pytest-asyncio>=1", "websockets>=15", "ruff>=0.12"]
+# The Ubuntu image wheel comes from Microsoft's Quicksand index, not PyPI, so
+# it is a source-checkout dependency group rather than a published extra.
+ubuntu = ["quicksand-ubuntu==0.10.0"]
 
 [project.scripts]
 external-sandbox-quicksand = "external_sandbox_quicksand.cli:main"

@@ -1,0 +1,53 @@
+name: Publish to PyPI
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v10.3.3
+        with:
+          python-version: '3.14'
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+      - name: Check release tag matches the project version
+        env:
+          TAG: ${{ github.event.release.tag_name }}
+        run: |
+          VERSION=$(uv version --short)
+          if [ "${TAG#v}" != "$VERSION" ]; then
+            echo "Release tag $TAG does not match pyproject.toml version $VERSION"
+            exit 1
+          fi
+      - name: Fetch the shared client from external-sandbox
+        run: git clone --depth 1 https://github.com/prime-radiant-inc/external-sandbox.git "$RUNNER_TEMP/external-sandbox"
+      - run: uv run ruff check .
+      - name: Python tests
+        env:
+          EXTERNAL_SANDBOX_CLIENT: ${{ runner.temp }}/external-sandbox/claude-code/external_sandbox_exec.py
+        run: uv run pytest -m 'not integration'
+      - name: JavaScript tests
+        run: node --test tests/test_terminal_js.mjs
+
+  publish:
+    needs: test
+    # The PyPI upload action runs in a Linux container.
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/p/external-sandbox-quicksand
+    permissions:
+      id-token: write  # PyPI trusted publishing (OIDC)
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v10.3.3
+      - run: uv build
+      - uses: pypa/gh-action-pypi-publish@v1.14.3
