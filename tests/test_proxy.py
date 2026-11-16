@@ -6,6 +6,7 @@ import ssl
 
 import aiohttp
 import pytest
+import truststore
 from aiohttp import web
 
 from external_sandbox_quicksand.proxy import HostProxy, LiteralRedactor
@@ -70,6 +71,15 @@ async def local_dns(monkeypatch):
 
 def proxy_url(proxy):
     return "http://%s:%d" % proxy.address
+
+
+async def recorded(proxy, count=1):
+    """Activity is recorded as each connection finishes, just after the client is answered."""
+    for _ in range(150):
+        if len(proxy.snapshot()["events"]) >= count:
+            break
+        await asyncio.sleep(0.02)
+    return proxy.snapshot()["events"]
 
 
 async def raw(proxy, request, *, tls_host=None):
@@ -229,6 +239,8 @@ async def test_upstream_certificate_verification_cannot_be_disabled(local_dns):
                 assert response.status == 502
                 assert await response.text() == "502 Bad Gateway\n"
         assert received == []
+        event = (await recorded(proxy))[-1]
+        assert (event["status"], event["decision"], event["reason"]) == (502, "error", "upstream_certificate_not_verified")
     context = ssl._create_unverified_context()
     with pytest.raises(ValueError, match="verification"):
         HostProxy(ProxyPolicy.from_config({"allow": []}), upstream_ssl_context=context)
@@ -249,6 +261,7 @@ async def test_upstream_checks_original_hostname_even_after_numeric_ip_pinning(l
                     assert response.status == 502
                     await response.read()
             assert received == []
+            assert (await recorded(proxy))[-1]["reason"] == "upstream_certificate_not_verified"
 
 
 async def test_framing_conflicts_duplicate_credentials_and_transport_header_credentials(local_dns):
@@ -396,3 +409,30 @@ async def test_policy_updates_are_atomic_revoke_streams_and_require_stable_guest
                 await denied.read()
         release.set()
         assert proxy.snapshot()["policy"]["allow"] == []
+
+
+def test_upstream_certificates_are_checked_against_the_system_trust_store_by_default():
+    context = HostProxy(ProxyPolicy.from_config({"allow": []}, {}))._upstream_ssl
+    assert isinstance(context, truststore.SSLContext)
+    assert context.verify_mode == ssl.CERT_REQUIRED and context.check_hostname
+
+
+async def test_client_hanging_up_mid_response_is_recorded_as_allowed_with_the_upstream_status():
+    async def handler(request):
+        response = web.StreamResponse()
+        await response.prepare(request)
+        with contextlib.suppress(ConnectionError):
+            for _ in range(400):  # far more than socket buffers hold, so the proxy is still relaying
+                await response.write(b"x" * 65536)
+        return response
+
+    async with upstream(handler) as (port, _), proxy_for(port) as (proxy, origin):
+        reader, writer = await asyncio.open_connection(*proxy.address)
+        writer.write(f"GET {origin}/large HTTP/1.1\r\nHost: 127.0.0.1:{port}\r\n\r\n".encode())
+        await writer.drain()
+        head = await asyncio.wait_for(reader.readuntil(b"\r\n\r\n"), 3)
+        assert head.startswith(b"HTTP/1.1 200")
+        writer.close()
+        await writer.wait_closed()
+        events = await recorded(proxy)
+        assert [(e["status"], e["decision"], e["reason"]) for e in events] == [(200, "allowed", "client_disconnected")]

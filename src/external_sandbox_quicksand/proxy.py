@@ -20,6 +20,7 @@ from urllib.parse import urlsplit
 
 import aiohttp
 import h11
+import truststore
 from aiohttp.abc import AbstractResolver
 from yarl import URL
 
@@ -49,6 +50,14 @@ class ProxyFailure(Exception):
         self.status = status
         self.reason = reason
         super().__init__(reason)
+
+
+class ClientDisconnected(Exception):
+    """The sandbox client hung up while an upstream response was being relayed."""
+
+    def __init__(self, status: int):
+        self.status = status
+        super().__init__("client_disconnected")
 
 
 class LiteralRedactor:
@@ -165,7 +174,8 @@ class HostProxy:
         self.policy = policy
         self._ca = CertificateAuthority()
         self._contexts: dict[str, ssl.SSLContext] = {}
-        self._upstream_ssl = upstream_ssl_context or ssl.create_default_context()
+        # Trust what the host operating system trusts, as browsers and curl do.
+        self._upstream_ssl = upstream_ssl_context or truststore.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
         if (self._upstream_ssl.verify_mode != ssl.CERT_REQUIRED
                 or not self._upstream_ssl.check_hostname):
             raise ValueError("Upstream TLS verification must remain enabled")
@@ -383,8 +393,13 @@ class HostProxy:
             status, decision, reason = 403, "denied", "policy_denied"
         except ProxyFailure as error:
             status, reason = error.status, error.reason
+        except ClientDisconnected as error:
+            # The upstream answered and the policy allowed it; only the reader left early.
+            status, decision, reason = error.status, "allowed", "client_disconnected"
         except TimeoutError:
             status, reason = 504, "timeout"
+        except aiohttp.ClientConnectorCertificateError:
+            status, reason = 502, "upstream_certificate_not_verified"
         except (aiohttp.ClientError, OSError, ssl.SSLError):
             status, reason = 502, "upstream_or_transport_error"
         except (h11.RemoteProtocolError, h11.LocalProtocolError, UnicodeError, ValueError):
@@ -419,6 +434,17 @@ class HostProxy:
             raise ProxyFailure(400, "upgrades_not_supported")
         if self._connection_tokens(headers) & {"host", "content-length", "transfer-encoding"}:
             raise ProxyFailure(400, "invalid_connection_header")
+
+    @staticmethod
+    async def _relay(writer, data, status):
+        """Send response bytes to the sandbox client, which may hang up at any point."""
+        try:
+            writer.write(data)
+            await asyncio.wait_for(writer.drain(), timeout=IDLE_TIMEOUT)
+        except TimeoutError:
+            raise
+        except OSError:
+            raise ClientDisconnected(status) from None
 
     async def _error(self, writer, status):
         phrase = http.HTTPStatus(status).phrase
@@ -467,9 +493,9 @@ class HostProxy:
                     redactor = LiteralRedactor(policy.secret_values)
                     response_headers.append((name, redactor.feed(value, final=True)))
                 response_headers.append((b"connection", b"close"))
-                writer.write(connection.send(h11.Response(status_code=response.status, headers=response_headers)))
+                head = connection.send(h11.Response(status_code=response.status, headers=response_headers))
                 response_started[0] = True
-                await asyncio.wait_for(writer.drain(), timeout=IDLE_TIMEOUT)
+                await self._relay(writer, head, response.status)
                 redactor = LiteralRedactor(policy.secret_values)
                 total = 0
                 sent = 0
@@ -482,13 +508,11 @@ class HostProxy:
                         sent += len(filtered)
                         if sent > MAX_RESPONSE:
                             raise ProxyFailure(502, "response_too_large")
-                        writer.write(connection.send(h11.Data(data=filtered)))
-                        await asyncio.wait_for(writer.drain(), timeout=IDLE_TIMEOUT)
+                        await self._relay(writer, connection.send(h11.Data(data=filtered)), response.status)
                 final = redactor.feed(b"", final=True)
                 if final:
                     if sent + len(final) > MAX_RESPONSE:
                         raise ProxyFailure(502, "response_too_large")
                     writer.write(connection.send(h11.Data(data=final)))
-                writer.write(connection.send(h11.EndOfMessage()))
-                await asyncio.wait_for(writer.drain(), timeout=IDLE_TIMEOUT)
+                await self._relay(writer, connection.send(h11.EndOfMessage()), response.status)
                 return response.status
