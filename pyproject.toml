@@ -1,6 +1,6 @@
 [project]
 name = "external-sandbox-quicksand"
-version = "0.1.0"
+version = "0.2.0"
 description = "External Sandbox server backed by Quicksand QEMU virtual machines"
 license = "Apache-2.0 AND BSD-3-Clause"
 license-files = ["LICENSE", "src/external_sandbox_quicksand/guest_bin/LICENSE-Go"]
