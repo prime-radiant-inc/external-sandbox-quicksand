@@ -56,7 +56,7 @@ Open `http://127.0.0.1:8688/` to run commands through the streaming WebSocket AP
 
 ## Controlled network access
 
-Without `--proxy-config` the VM has no network interface. With a policy file, it gets exactly one: a QEMU user-mode NIC with `restrict=on` and a single `guestfwd` rule, `10.0.2.101:3128`, connected to a host stream. Save this starter policy as `proxy.json`; it allows only GET and HEAD requests to `https://example.com`:
+Without `--proxy` or `--proxy-config` the VM has no network interface. With either option, it gets exactly one: a QEMU user-mode NIC with `restrict=on` and a single `guestfwd` rule, `10.0.2.101:3128`, connected to a host stream. Save this starter policy as `proxy.json`; it allows only GET and HEAD requests to `https://example.com`:
 
 ```json
 {
@@ -68,6 +68,12 @@ Without `--proxy-config` the VM has no network interface. With a policy file, it
 
 ```sh
 uvx external-sandbox-quicksand --proxy-config proxy.json
+```
+
+To start with every destination denied and add allow rules from the `/proxy` page as you need them, pass `--proxy` in place of a policy file. When both options are given, the file supplies the policy. `guestEnv` cannot be changed on the page, so placeholder variables for credential rules need a policy file.
+
+```sh
+uvx external-sandbox-quicksand --proxy
 ```
 
 QEMU's `guestfwd` TCP backend is one persistent byte stream, so a small static Go helper ([`guest-mux`](https://github.com/prime-radiant-inc/external-sandbox-quicksand/blob/main/guest-mux/guest_mux.go), from the Quicksand proxy prototype) listens on guest `127.0.0.1:3128` and multiplexes each connection over that stream. The host [bridge](https://github.com/prime-radiant-inc/external-sandbox-quicksand/blob/main/src/external_sandbox_quicksand/proxy_bridge.py) opens one connection per channel to the embedded host proxy and nowhere else. Commands receive standard proxy variables, `NODE_USE_ENV_PROXY=1`, and a CA bundle containing the proxy's public certificate.
